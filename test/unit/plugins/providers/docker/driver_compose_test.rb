@@ -114,8 +114,10 @@ describe VagrantPlugins::DockerProvider::Driver::Compose do
     } }
 
     after {
-      subject.create(params)
-      expect(cmd_executed.first).to match(compose_execute_up_regex)
+      Datadog::CI.trace("stage", "create_after") do
+        subject.create(params)
+        expect(cmd_executed.first).to match(compose_execute_up_regex)
+      end
     }
 
     it 'sets container name' do
@@ -174,10 +176,14 @@ describe VagrantPlugins::DockerProvider::Driver::Compose do
     end
 
     it 'links containers' do
-      params[:links].each do |link|
-        expect(docker_yml).to receive(:write).with(/#{link}/)
+      Datadog::CI.trace("stage", "links_expectactions_setup") do
+        params[:links].each do |link|
+          expect(docker_yml).to receive(:write).with(/#{link}/)
+        end
       end
-      subject.create(params)
+      Datadog::CI.trace("stage", "subject_create") do
+        subject.create(params)
+      end
     end
 
     it 'sets environmental variables' do
