@@ -53,31 +53,33 @@ describe VagrantPlugins::DockerProvider::Driver::Compose do
   subject{ described_class.new(machine) }
 
   before do
-    @cmd = []
-    allow(Vagrant::Util::Subprocess).to receive(:execute) { |*args|
-      if args.last.is_a?(Hash)
-        args = args[0, args.size - 1]
-      end
-      invalid = args.detect { |a| !a.is_a?(String) }
-      if invalid
-        raise TypeError,
-          "Vagrant::Util::Subprocess#execute only accepts signle option Hash and String arguments, received `#{invalid.class}'"
-      end
-      @cmd << args.join(" ")
-    }.and_return(execute_result)
-    allow_any_instance_of(Vagrant::Errors::VagrantError).
-      to receive(:translate_error) { |*args| args.join(" ") }
+    Datadog::CI.trace("stage", "before") do
+      @cmd = []
+      allow(Vagrant::Util::Subprocess).to receive(:execute) { |*args|
+        if args.last.is_a?(Hash)
+          args = args[0, args.size - 1]
+        end
+        invalid = args.detect { |a| !a.is_a?(String) }
+        if invalid
+          raise TypeError,
+            "Vagrant::Util::Subprocess#execute only accepts signle option Hash and String arguments, received `#{invalid.class}'"
+        end
+        @cmd << args.join(" ")
+      }.and_return(execute_result)
+      allow_any_instance_of(Vagrant::Errors::VagrantError).
+        to receive(:translate_error) { |*args| args.join(" ") }
 
-    allow(Vagrant::Util::Which).to receive(:which).and_return("/dev/null/docker-compose")
-    allow(env).to receive(:lock).and_yield
-    allow(Pathname).to receive(:new).with(local_data_path).and_return(local_data_path)
-    allow(Pathname).to receive(:new).with('/host/path').and_call_original
-    allow(local_data_path).to receive(:join).and_return(data_directory)
-    allow(data_directory).to receive(:mkpath)
-    allow(FileUtils).to receive(:mv)
-    allow(Tempfile).to receive(:new).with("vagrant-docker-compose").and_return(docker_yml)
-    allow(docker_yml).to receive(:write)
-    allow(docker_yml).to receive(:close)
+      allow(Vagrant::Util::Which).to receive(:which).and_return("/dev/null/docker-compose")
+      allow(env).to receive(:lock).and_yield
+      allow(Pathname).to receive(:new).with(local_data_path).and_return(local_data_path)
+      allow(Pathname).to receive(:new).with('/host/path').and_call_original
+      allow(local_data_path).to receive(:join).and_return(data_directory)
+      allow(data_directory).to receive(:mkpath)
+      allow(FileUtils).to receive(:mv)
+      allow(Tempfile).to receive(:new).with("vagrant-docker-compose").and_return(docker_yml)
+      allow(docker_yml).to receive(:write)
+      allow(docker_yml).to receive(:close)
+    end
   end
 
   describe '#build' do
@@ -132,10 +134,14 @@ describe VagrantPlugins::DockerProvider::Driver::Compose do
       before{ params[:links] = ["linkl1:linkr1", "linkl2:linkr2"] }
 
       it 'links containers' do
-        params[:links].flatten.map{|l| l.split(':')}.each do |link|
-          expect(docker_yml).to receive(:write).with(/#{link}/)
+        Datadog::CI.trace("stage", "links_expectactions_setup") do
+          params[:links].flatten.map{|l| l.split(':')}.each do |link|
+            expect(docker_yml).to receive(:write).with(/#{link}/)
+          end
         end
-        subject.create(params)
+        Datadog::CI.trace("stage", "subject_create") do
+          subject.create(params)
+        end
       end
     end
 
