@@ -10,3 +10,7 @@ if File.exist?(File.expand_path("../../vagrant-spec", __FILE__))
 else
   gem 'vagrant-spec', git: "https://github.com/hashicorp/vagrant-spec.git", branch: :main
 end
+
+# datadog CI visibility
+gem "ddtrace", github: "DataDog/dd-trace-rb", ref: "master"
+gem "datadog-ci", path: "../datadog-ci-rb"
