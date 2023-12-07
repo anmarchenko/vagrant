@@ -80,3 +80,4 @@ lib/vagrant/vagrant_ssl.so
 
 # direnv directory
 .direnv
+/test.rb
