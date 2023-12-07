@@ -16,6 +16,9 @@ require "vagrant/util/platform"
 # Include patches for fake ftp
 require "vagrant/patches/fake_ftp"
 
+require "datadog/ci"
+require "ddtrace/auto_instrument"
+
 # Be sure our proto messages are available
 Vagrant.load_vagrant_proto!
 
@@ -76,3 +79,9 @@ end
 
 # Disable checkpoint
 Checkpoint.disable!
+
+Datadog.configure do |c|
+  c.service = "vagrant"
+  c.ci.enabled = true
+  c.ci.instrument :rspec
+end
