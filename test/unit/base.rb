@@ -84,4 +84,5 @@ Datadog.configure do |c|
   c.service = "vagrant"
   c.ci.enabled = true
   c.ci.instrument :rspec
+  c.ci.experimental_test_suite_level_visibility_enabled = true
 end
