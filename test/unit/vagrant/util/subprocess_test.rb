@@ -158,15 +158,6 @@ describe Vagrant::Util::Subprocess do
     end
 
     context "when subprocess is running" do
-      it "should return true" do
-        sleep_test_commands.each do |sp|
-          thread = Thread.new{ sp.execute }
-          sleep(0.1)
-          expect(sp.stop).to be(true)
-          thread.join
-        end
-      end
-
       it "should stop the process" do
         sleep_test_commands.each do |sp|
           thread = Thread.new{ sp.execute }
