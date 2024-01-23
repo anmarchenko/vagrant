@@ -53,7 +53,7 @@ describe VagrantPlugins::DockerProvider::Driver::Compose do
   subject{ described_class.new(machine) }
 
   before do
-    Datadog::CI.trace("stage", "before") do
+    Datadog::CI.trace("before", type: "stage") do
       @cmd = []
       allow(Vagrant::Util::Subprocess).to receive(:execute) { |*args|
         if args.last.is_a?(Hash)
@@ -114,7 +114,7 @@ describe VagrantPlugins::DockerProvider::Driver::Compose do
     } }
 
     after {
-      Datadog::CI.trace("stage", "create_after") do
+      Datadog::CI.trace("create_after", type: "stage") do
         subject.create(params)
         expect(cmd_executed.first).to match(compose_execute_up_regex)
       end
@@ -136,12 +136,12 @@ describe VagrantPlugins::DockerProvider::Driver::Compose do
       before{ params[:links] = ["linkl1:linkr1", "linkl2:linkr2"] }
 
       it 'links containers' do
-        Datadog::CI.trace("stage", "links_expectactions_setup") do
+        Datadog::CI.trace("links_expectactions_setup", type: "stage") do
           params[:links].flatten.map{|l| l.split(':')}.each do |link|
             expect(docker_yml).to receive(:write).with(/#{link}/)
           end
         end
-        Datadog::CI.trace("stage", "subject_create") do
+        Datadog::CI.trace("subject_create", type: "stage") do
           subject.create(params)
         end
       end
@@ -176,12 +176,12 @@ describe VagrantPlugins::DockerProvider::Driver::Compose do
     end
 
     it 'links containers' do
-      Datadog::CI.trace("stage", "links_expectactions_setup") do
+      Datadog::CI.trace("links_expectactions_setup", type: "stage") do
         params[:links].each do |link|
           expect(docker_yml).to receive(:write).with(/#{link}/)
         end
       end
-      Datadog::CI.trace("stage", "subject_create") do
+      Datadog::CI.trace("subject_create", type: "stage") do
         subject.create(params)
       end
     end
