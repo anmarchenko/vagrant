@@ -8,6 +8,8 @@ require "rubygems"
 require "checkpoint"
 require "rspec/its"
 
+require "simplecov" if ENV["COVERAGE"]
+
 require "datadog/ci"
 require "ddtrace/auto_instrument"
 
