@@ -16,6 +16,7 @@ require "datadog/auto_instrument"
 Datadog.configure do |c|
   c.service = "vagrant"
   c.ci.enabled = true
+  c.ci.itr_enabled = true
   c.ci.instrument :rspec
 
   c.diagnostics.startup_logs.enabled = false
