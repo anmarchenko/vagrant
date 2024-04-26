@@ -320,6 +320,7 @@ EOH
         before do
           allow(File).to receive(:stat).and_return(exports_stat)
           allow(File).to receive(:exist?).and_return(false)
+          allow(Pathname).to receive(:new).and_call_original
           allow(Pathname).to receive(:new).with(tmp_exports_path.to_s).and_return(exports_pathname)
         end
 

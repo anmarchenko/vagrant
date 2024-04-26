@@ -269,6 +269,7 @@ describe Vagrant::Bundler::SolutionFile do
     end
 
     before do
+      allow(Pathname).to receive(:new).and_call_original
       allow(Pathname).to receive(:new).with(plugin_file_path).and_return(plugin_file)
       allow(Pathname).to receive(:new).with(solution_file_path).and_return(solution_file)
       allow(plugin_file).to receive(:exist?).and_return(plugin_file_exists)
@@ -389,6 +390,7 @@ describe Vagrant::Bundler::SolutionFile do
     end
 
     before do
+      allow(Pathname).to receive(:new).and_call_original
       allow(Pathname).to receive(:new).with(plugin_file_path).and_return(plugin_file)
       allow(Pathname).to receive(:new).with(solution_file_path).and_return(solution_file)
       allow(plugin_file).to receive(:exist?).and_return(false)
