@@ -3,6 +3,8 @@
 #
 #
 # another change
+#
+# one more change
 
 module Vagrant
   module Plugin
