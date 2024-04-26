@@ -11,7 +11,7 @@ require "rspec/its"
 require "simplecov" if ENV["COVERAGE"]
 
 require "datadog/ci"
-require "ddtrace/auto_instrument"
+require "datadog/auto_instrument"
 
 Datadog.configure do |c|
   c.service = "vagrant"
