@@ -83,6 +83,8 @@ module Vagrant
 
           @commands = Registry.new
           @configs = Hash.new { |h, k| h[k] = Registry.new }
+
+
           @guests  = Registry.new
           @guest_capabilities = Hash.new { |h, k| h[k] = Registry.new }
           @hosts   = Registry.new
