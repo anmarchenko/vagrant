@@ -308,6 +308,8 @@ EOH
           expect(args).to include("sudo")
           expect(args).to include("chown")
         }.and_return(Vagrant::Util::Subprocess::Result.new(1, "", ""))
+
+
         expect { described_class.nfs_write_exports("new content") }.to raise_error(Vagrant::Errors::NFSExportsFailed)
       end
 
