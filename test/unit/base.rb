@@ -18,8 +18,6 @@ Datadog.configure do |c|
   c.ci.enabled = true
   c.ci.itr_enabled = true
   c.ci.instrument :rspec
-
-  c.diagnostics.startup_logs.enabled = false
 end
 
 # Require Vagrant itself so we can reference the proper
