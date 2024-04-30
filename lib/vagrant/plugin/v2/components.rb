@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: BUSL-1.1
 
 # example change
+# example change 2
 module Vagrant
   module Plugin
     module V2
