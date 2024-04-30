@@ -5,7 +5,7 @@ require File.expand_path("../../../../base", __FILE__)
 
 require Vagrant.source_root.join("plugins/kernel_v2/config/ssh")
 
-describe VagrantPlugins::Kernel_V2::SSHConfig do
+describe VagrantPlugins::Kernel_V2::SSHConfig, datadog_itr_unskippable: true do
   subject { described_class.new }
 
   describe "#default" do
