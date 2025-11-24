@@ -370,6 +370,8 @@ describe Vagrant::Action::Builtin::BoxAdd, :skip_windows, :bsdtar do
       end
     end
 
+
+
     context "with a box name containing invalid URI characters" do
       it "should not raise an error" do
         box_path = iso_env.box2_file(:virtualbox)

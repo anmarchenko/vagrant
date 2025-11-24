@@ -27,6 +27,8 @@ module Vagrant
       @actions << [machine, action, options]
     end
 
+
+
     # Custom runs a custom proc against a machine.
     #
     # @param [Machine] machine The machine to run against.
