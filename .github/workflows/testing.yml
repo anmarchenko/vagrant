@@ -1,4 +1,5 @@
 name: Vagrant Ruby Tests
+
 on:
   pull_request:
     branches:
