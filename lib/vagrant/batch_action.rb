@@ -27,14 +27,14 @@ module Vagrant
       @actions << [machine, action, options]
     end
 
-
-
     # Custom runs a custom proc against a machine.
     #
     # @param [Machine] machine The machine to run against.
     def custom(machine, &block)
       @actions << [machine, block, nil]
     end
+
+
 
     # Run all the queued up actions, parallelizing if possible.
     #

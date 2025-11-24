@@ -90,6 +90,7 @@ describe VagrantPlugins::ProviderVirtualBox::Provider do
     let(:ssh) { double("ssh", guest_port: 22) }
     let(:config) { double("config", ssh: ssh) }
 
+
     before do
       allow(VagrantPlugins::ProviderVirtualBox::Driver::Meta).to receive(:new).and_return(driver)
       allow(machine).to receive(:action).with(:read_state).and_return(machine_state_id: :running)
