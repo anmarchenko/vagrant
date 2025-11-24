@@ -5,6 +5,8 @@ source "https://rubygems.org"
 
 gemspec
 
+gem "csv"
+
 if File.exist?(File.expand_path("../../vagrant-spec", __FILE__))
   gem 'vagrant-spec', path: "../vagrant-spec"
 else

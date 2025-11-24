@@ -17,7 +17,17 @@ jobs:
         with:
           ruby-version: '3.3'
           bundler-cache: true
-      - name: install dependencies
-        run: sudo apt -y install libarchive-tools
+      - name: Cache APT packages
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: |
+            libarchive-tools
+          version: 1.0
+      - name: Configure Datadog Test Optimization
+        uses: datadog/test-visibility-github-action@v2
+        with:
+          languages: ruby
+          api_key: ${{ secrets.DD_API_KEY }}
+          site: datadoghq.eu
       - name: Run Tests
         run: bundle exec rake test:unit
