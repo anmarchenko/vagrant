@@ -1,9 +1,9 @@
 name: Vagrant Ruby Tests
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - '*'
 env:
   DD_ENV: ci
   DD_TEST_OPTIMIZATION_RUNNER_PLATFORM: ruby
