@@ -11,9 +11,5 @@ else
   gem 'vagrant-spec', git: "https://github.com/hashicorp/vagrant-spec.git", branch: :main
 end
 
-# datadog CI visibility
-gem "datadog", github: "DataDog/dd-trace-rb", ref: "master"
-gem "datadog-ci", path: "../datadog-ci-rb"
-
 # code coverage
 gem "simplecov", require: false
