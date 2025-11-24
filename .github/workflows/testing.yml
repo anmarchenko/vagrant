@@ -4,11 +4,19 @@ on:
   pull_request:
     branches:
       - main
+env:
+  DD_ENV: ci
+  DD_TEST_OPTIMIZATION_RUNNER_PLATFORM: ruby
+  DD_TEST_OPTIMIZATION_RUNNER_FRAMEWORK: rspec
 
 jobs:
-  unit-tests-ruby:
+  plan:
     runs-on: ubuntu-latest
-    name: Unit tests
+    name: Plan parallel execution
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    env:
+      DD_TEST_OPTIMIZATION_RUNNER_COMMAND: 'bundle exec rake test:unit'
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
@@ -29,5 +37,74 @@ jobs:
           languages: ruby
           api_key: ${{ secrets.DD_API_KEY }}
           site: datadoghq.eu
+      - name: Download ddtest binary
+        run: |
+          LATEST_PRERELEASE_TAG=$(gh release list --repo DataDog/ddtest --json tagName,isPrerelease --jq '.[] | select(.isPrerelease) | .tagName' | head -n 1)
+          gh release download "$LATEST_PRERELEASE_TAG" --repo DataDog/ddtest --pattern "ddtest-linux-amd64" --dir bin
+          mv bin/ddtest-linux-amd64 bin/ddtest
+          chmod +x bin/ddtest
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Setup Datadog Test Runner
+        run: bin/ddtest plan
+        env:
+          DD_TEST_OPTIMIZATION_RUNNER_MIN_PARALLELISM: 1
+          DD_TEST_OPTIMIZATION_RUNNER_MAX_PARALLELISM: 8
+      - name: Set matrix output
+        id: matrix
+        run: cat .testoptimization/github/config >> $GITHUB_OUTPUT
+      - name: Upload DD artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dd-artifacts
+          path: '.testoptimization'
+          if-no-files-found: warn
+          include-hidden-files: true
+
+  test:
+    runs-on: ubuntu-latest
+    name: Unit tests
+    needs: [plan]
+    env:
+      DD_TEST_OPTIMIZATION_RUNNER_CI_NODE: ${{ matrix.ci_node_index }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
+
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Download DD artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dd-artifacts
+          path: '.testoptimization'
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: Cache APT packages
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: |
+            libarchive-tools
+          version: 1.0
+      - name: Configure Datadog Test Optimization
+        uses: datadog/test-visibility-github-action@v2
+        with:
+          languages: ruby
+          api_key: ${{ secrets.DD_API_KEY }}
+          site: datadoghq.eu
+      - name: Download ddtest binary
+        run: |
+          LATEST_PRERELEASE_TAG=$(gh release list --repo DataDog/ddtest --json tagName,isPrerelease --jq '.[] | select(.isPrerelease) | .tagName' | head -n 1)
+          gh release download "$LATEST_PRERELEASE_TAG" --repo DataDog/ddtest --pattern "ddtest-linux-amd64" --dir bin
+          mv bin/ddtest-linux-amd64 bin/ddtest
+          chmod +x bin/ddtest
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Run Tests
-        run: bundle exec rake test:unit
+        run: bin/ddtest run
+        env:
+          DD_TEST_SESSION_NAME: vagrant-runner-${{ matrix.ci_node_index }}

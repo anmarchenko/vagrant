@@ -15,3 +15,5 @@ end
 
 # code coverage
 gem "simplecov", require: false
+
+gem "datadog-ci"
