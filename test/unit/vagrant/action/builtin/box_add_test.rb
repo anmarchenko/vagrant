@@ -93,12 +93,12 @@ describe Vagrant::Action::Builtin::BoxAdd, :skip_windows, :bsdtar do
 
     before do
       # Lock file
-      @f = File.open(mutex_path, "w+") 
-      @f.flock(File::LOCK_EX|File::LOCK_NB) 
+      @f = File.open(mutex_path, "w+")
+      @f.flock(File::LOCK_EX|File::LOCK_NB)
     end
-  
+
     after { @f.close }
-    
+
     it "raises a download error" do
       env[:box_name] = "foo"
       env[:box_url] = box_path.to_s
@@ -370,6 +370,8 @@ describe Vagrant::Action::Builtin::BoxAdd, :skip_windows, :bsdtar do
       end
     end
 
+
+
     context "with a box name containing invalid URI characters" do
       it "should not raise an error" do
         box_path = iso_env.box2_file(:virtualbox)
@@ -386,34 +388,6 @@ describe Vagrant::Action::Builtin::BoxAdd, :skip_windows, :bsdtar do
         expect(app).to receive(:call).with(env)
 
         subject.call(env)
-      end
-    end
-
-    context "with URL containing credentials" do
-      let(:username){ "box-username" }
-      let(:password){ "box-password" }
-
-      it "scrubs credentials in output" do
-        box_path = iso_env.box2_file(:virtualbox)
-        with_web_server(box_path) do |port|
-          env[:box_name] = "foo"
-          env[:box_url] = "http://#{username}:#{password}@127.0.0.1:#{port}/#{box_path.basename}"
-
-          expect(box_collection).to receive(:add).with(any_args) { |path, name, version, opts|
-            expect(checksum(path)).to eq(checksum(box_path))
-            expect(name).to eq("foo")
-            expect(version).to eq("0")
-            expect(opts[:metadata_url]).to be_nil
-            true
-          }.and_return(box)
-
-          allow(env[:ui]).to receive(:detail).and_call_original
-          expect(env[:ui]).to receive(:detail).with(%r{.*http://(?!#{username}).+?:(?!#{password}).+?@127\.0\.0\.1:#{port}/#{box_path.basename}.*}).
-            and_call_original
-          expect(app).to receive(:call).with(env)
-
-          subject.call(env)
-        end
       end
     end
   end

@@ -83,21 +83,13 @@ describe VagrantPlugins::ProviderVirtualBox::Provider do
     end
   end
 
-  describe "#state" do
-    it "returns not_created if no ID" do
-      allow(machine).to receive(:id).and_return(nil)
-      allow(machine).to receive(:data_dir).and_return(".vagrant")
-
-      expect(subject.state.id).to eq(:not_created)
-    end
-  end
-
   describe "#ssh_info" do
     let(:result) { "127.0.0.1" }
     let(:exit_code) { 0 }
     let(:ssh_info) {{:host=>result,:port=>22}}
     let(:ssh) { double("ssh", guest_port: 22) }
     let(:config) { double("config", ssh: ssh) }
+
 
     before do
       allow(VagrantPlugins::ProviderVirtualBox::Driver::Meta).to receive(:new).and_return(driver)

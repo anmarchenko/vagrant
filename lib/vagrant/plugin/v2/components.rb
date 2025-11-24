@@ -1,6 +1,9 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: BUSL-1.1
 
+# example change
+# example change 2
+# example change 3
 module Vagrant
   module Plugin
     module V2

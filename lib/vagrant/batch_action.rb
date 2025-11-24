@@ -34,6 +34,8 @@ module Vagrant
       @actions << [machine, block, nil]
     end
 
+
+
     # Run all the queued up actions, parallelizing if possible.
     #
     # This will parallelize if and only if the provider of every machine
