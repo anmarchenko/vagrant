@@ -16,7 +16,7 @@ jobs:
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     env:
-      DD_TEST_OPTIMIZATION_RUNNER_COMMAND: 'bundle exec rake test:unit'
+      DD_TEST_OPTIMIZATION_RUNNER_TESTS_LOCATION: 'test/unit/**/*_test.rb'
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
