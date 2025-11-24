@@ -10,16 +10,6 @@ require "rspec/its"
 
 require "simplecov" if ENV["COVERAGE"]
 
-require "datadog/ci"
-require "datadog/auto_instrument"
-
-Datadog.configure do |c|
-  c.service = "vagrant"
-  c.ci.enabled = true
-  c.ci.itr_enabled = true
-  c.ci.instrument :rspec
-end
-
 # Require Vagrant itself so we can reference the proper
 # classes to test.
 require "vagrant"
