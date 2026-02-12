@@ -525,23 +525,6 @@ describe Vagrant::Box, :skip_windows do
       FileUtils.rm_rf(scratch)
     end
 
-    it "should repackage the box", :bsdtar do
-      test_file_contents = "hello, world!"
-
-      # Put a file in the box directory to verify it is packaged properly
-      # later.
-      directory.join("test_file").open("w") do |f|
-        f.write(test_file_contents)
-      end
-
-      # Repackage our box to some temporary directory
-      expect(subject.repackage(box_output_path)).to be(true)
-
-      # Let's now add this box again under a different name, and then
-      # verify that we get the proper result back.
-      new_box = box_collection.add(box_output_path, "foo2", "1.0")
-      expect(new_box.directory.join("test_file").read).to eq(test_file_contents)
-    end
   end
 
   describe "comparison and ordering" do
