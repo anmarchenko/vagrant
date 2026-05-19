@@ -46,6 +46,12 @@ RSpec.configure do |c|
   c.formatter = :progress
   c.color_mode = :on
 
+  c.before(:each) do
+    # Datadog's Net::HTTP flush checks proxy env vars while Vagrant specs add
+    # narrow key-specific ENV stubs.
+    allow(ENV).to receive(:[]).and_call_original
+  end
+
   if Vagrant::Util::Platform.windows?
     c.filter_run_excluding :skip_windows
   else
