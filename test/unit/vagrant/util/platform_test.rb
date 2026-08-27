@@ -221,6 +221,7 @@ describe Vagrant::Util::Platform do
     it "gracefully handles invalid input string errors" do
       bad_string = double("bad_string")
       allow(bad_string).to receive(:to_s).and_raise(ArgumentError)
+      allow_any_instance_of(String).to receive(:encode).and_call_original
       allow_any_instance_of(String).to receive(:encode).with("filesystem").and_return(bad_string)
       allow(subject).to receive(:fs_case_sensitive?).and_return(false)
 
