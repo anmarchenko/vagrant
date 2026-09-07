@@ -130,10 +130,14 @@ describe Vagrant::Util::Subprocess do
     it "should return true when subprocess is running" do
       sleep_test_commands.each do |sp|
         thread = Thread.new{ sp.execute }
-        sleep(0.3)
-        expect(sp.running?).to be(true)
-        sp.stop
-        thread.join
+        begin
+          deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 2
+          sleep(0.01) until sp.running? || Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
+          expect(sp.running?).to be(true)
+        ensure
+          sp.stop
+          thread.join
+        end
       end
     end
   end
