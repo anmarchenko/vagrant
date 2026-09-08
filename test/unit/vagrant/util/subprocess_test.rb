@@ -128,16 +128,12 @@ describe Vagrant::Util::Subprocess do
     end
 
     it "should return true when subprocess is running" do
-      sleep_test_commands.each do |sp|
-        thread = Thread.new{ sp.execute }
-        begin
-          deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 2
-          sleep(0.01) until sp.running? || Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
-          expect(sp.running?).to be(true)
-        ensure
-          sp.stop
-          thread.join
-        end
+      sp = described_class.new("sleep", "5", detach: true)
+      begin
+        sp.execute
+        expect(sp.running?).to be(true)
+      ensure
+        sp.stop
       end
     end
   end
@@ -163,12 +159,13 @@ describe Vagrant::Util::Subprocess do
 
     context "when subprocess is running" do
       it "should stop the process" do
-        sleep_test_commands.each do |sp|
-          thread = Thread.new{ sp.execute }
-          sleep(0.1)
+        sp = described_class.new("sleep", "5", detach: true)
+        begin
+          sp.execute
           sp.stop
           expect(sp.running?).to be(false)
-          thread.join
+        ensure
+          sp.stop
         end
       end
     end

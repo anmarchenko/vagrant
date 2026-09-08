@@ -992,12 +992,12 @@ describe VagrantPlugins::CommunicatorSSH::Communicator do
         f = Tempfile.new
         f.write(key_data)
         f.close
-        @key_file = f.path
+        @key_file = f
       end
-      @key_file
+      @key_file.path
     }
 
-    after { File.delete(key_file) }
+    after { @key_file.unlink if @key_file }
 
     context "when using rsa private key" do
       let(:key_data) { File.read(Vagrant.source_root.join("keys", "vagrant.key.rsa")) }
