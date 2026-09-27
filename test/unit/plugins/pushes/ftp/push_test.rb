@@ -33,12 +33,9 @@ describe VagrantPlugins::FTPPush::Push do
 
   describe "#push" do
     before(:all) do
-      @server = nil
-      with_random_port do |port1, port2|
-        @port = port1
-        @server = FakeFtp::Server.new(port1, port2)
-      end
+      @server = FakeFtp::Server.new(0, 0)
       @server.start
+      @port = @server.port
 
       @dir = Dir.mktmpdir("vagrant-ftp-push")
       FileUtils.touch("#{@dir}/.hidden.rb")
